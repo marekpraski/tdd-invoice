@@ -7,7 +7,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import pl.edu.agh.mwo.invoice.Invoice;
 import pl.edu.agh.mwo.invoice.product.DairyProduct;
 import pl.edu.agh.mwo.invoice.product.OtherProduct;
 import pl.edu.agh.mwo.invoice.product.Product;
@@ -23,7 +22,7 @@ public class InvoiceTest {
 
 	@Test
 	public void testEmptyInvoiceHasEmptySubtotal() {
-		Assert.assertThat(BigDecimal.ZERO, Matchers.comparesEqualTo(invoice.getSubtotal()));
+		Assert.assertThat(BigDecimal.ZERO, Matchers.comparesEqualTo(invoice.getTotalNetValue()));
 	}
 
 	@Test
@@ -33,14 +32,14 @@ public class InvoiceTest {
 
 	@Test
 	public void testEmptyInvoiceHasEmptyTotal() {
-		Assert.assertThat(BigDecimal.ZERO, Matchers.comparesEqualTo(invoice.getTotal()));
+		Assert.assertThat(BigDecimal.ZERO, Matchers.comparesEqualTo(invoice.getTotalGrossValue()));
 	}
 
 	@Test
 	public void testInvoiceHasTheSameSubtotalAndTotalIfTaxIsZero() {
 		Product taxFreeProduct = new TaxFreeProduct("Warzywa", new BigDecimal("199.99"));
 		invoice.addProduct(taxFreeProduct);
-		Assert.assertThat(invoice.getTotal(), Matchers.comparesEqualTo(invoice.getSubtotal()));
+		Assert.assertThat(invoice.getTotalGrossValue(), Matchers.comparesEqualTo(invoice.getTotalNetValue()));
 	}
 
 	@Test
@@ -48,7 +47,7 @@ public class InvoiceTest {
 		invoice.addProduct(new TaxFreeProduct("Owoce", new BigDecimal("200")));
 		invoice.addProduct(new DairyProduct("Maslanka", new BigDecimal("100")));
 		invoice.addProduct(new OtherProduct("Wino", new BigDecimal("10")));
-		Assert.assertThat(new BigDecimal("310"), Matchers.comparesEqualTo(invoice.getSubtotal()));
+		Assert.assertThat(new BigDecimal("310"), Matchers.comparesEqualTo(invoice.getTotalNetValue()));
 	}
 
 	@Test
@@ -70,7 +69,7 @@ public class InvoiceTest {
 		invoice.addProduct(new DairyProduct("Maslo", new BigDecimal("100")));
 		// price with tax: 12.30
 		invoice.addProduct(new OtherProduct("Chipsy", new BigDecimal("10")));
-		Assert.assertThat(new BigDecimal("320.30"), Matchers.comparesEqualTo(invoice.getTotal()));
+		Assert.assertThat(new BigDecimal("320.30"), Matchers.comparesEqualTo(invoice.getTotalGrossValue()));
 	}
 
 	@Test
@@ -81,7 +80,7 @@ public class InvoiceTest {
 		invoice.addProduct(new DairyProduct("Kozi Serek", new BigDecimal("10")), 3);
 		// 1000x pinezka - price: 10
 		invoice.addProduct(new OtherProduct("Pinezka", new BigDecimal("0.01")), 1000);
-		Assert.assertThat(new BigDecimal("50"), Matchers.comparesEqualTo(invoice.getSubtotal()));
+		Assert.assertThat(new BigDecimal("50"), Matchers.comparesEqualTo(invoice.getTotalNetValue()));
 	}
 
 	@Test
@@ -92,7 +91,7 @@ public class InvoiceTest {
 		invoice.addProduct(new DairyProduct("Chedar", new BigDecimal("10")), 3);
 		// 1000x pinezka - price with tax: 12.30
 		invoice.addProduct(new OtherProduct("Pinezka", new BigDecimal("0.01")), 1000);
-		Assert.assertThat(new BigDecimal("54.70"), Matchers.comparesEqualTo(invoice.getTotal()));
+		Assert.assertThat(new BigDecimal("54.70"), Matchers.comparesEqualTo(invoice.getTotalGrossValue()));
 	}
 
 	@Test(expected = IllegalArgumentException.class)
